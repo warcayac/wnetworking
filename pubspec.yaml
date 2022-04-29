@@ -1,7 +1,7 @@
 name: wnetworking
 description: Servicio de solicitudes HTTP.
 version: 0.0.1
-# homepage:
+homepage: https://github.com/warcayac/wnetworking
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
