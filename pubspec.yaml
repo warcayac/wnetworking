@@ -1,0 +1,16 @@
+name: wnetworking
+description: Servicio de solicitudes HTTP.
+version: 0.0.1
+# homepage:
+
+environment:
+  sdk: ">=2.15.0 <3.0.0"
+
+dependencies:
+  http: ^0.13.4
+  http_parser: ^4.0.0
+  mime: ^1.0.1
+  xml2json: ^5.3.2
+
+dev_dependencies:
+  lints: ^1.0.0
