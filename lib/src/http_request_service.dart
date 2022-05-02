@@ -114,6 +114,7 @@ class HttpReqService {
       'GET', url, auth: auth, authData: authData, body: body,
       headers: headers, okCode: okCode, jsonResponse: jsonResponse, 
       multipart: multipart, returnWasOkOnly: returnWasOkOnly,
+      ifMapThenMap: ifMapThenMap,
     );
   }
   /* ---------------------------------------------------------------------------- */
@@ -122,6 +123,7 @@ class HttpReqService {
       'POST', url, auth: auth, authData: authData, body: body,
       headers: headers, okCode: okCode, jsonResponse: jsonResponse, 
       multipart: multipart, returnWasOkOnly: returnWasOkOnly,
+      ifMapThenMap: ifMapThenMap,
     );
   }
   /* ---------------------------------------------------------------------------- */
@@ -235,13 +237,10 @@ class HttpReqService {
           });
           rq.bodyFields = _body;
         } else {
-          print(body.runtimeType);
-          print(body);
           rq.body = json.encode(body);
         }
       }
       rq.headers.addAll(_headers);
-      print(rq.body.toString());
     }
 
     return http.Response
