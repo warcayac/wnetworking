@@ -109,19 +109,19 @@ class HttpReqService {
       .catchError((err) => PrintService.showError(err));
   }
   /* ---------------------------------------------------------------------------- */
-  static Future<T?> get<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, bool jsonResponse = true, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true}) {
+  static Future<T?> get<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true}) {
     return _baseRequest<T>(
       'GET', url, auth: auth, authData: authData, body: body,
-      headers: headers, okCode: okCode, jsonResponse: jsonResponse, 
+      headers: headers, okCode: okCode, 
       multipart: multipart, returnWasOkOnly: returnWasOkOnly,
       ifMapThenMap: ifMapThenMap,
     );
   }
   /* ---------------------------------------------------------------------------- */
-  static Future<T?> post<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, bool jsonResponse = false, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true}) {
+  static Future<T?> post<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true}) {
     return _baseRequest<T>(
       'POST', url, auth: auth, authData: authData, body: body,
-      headers: headers, okCode: okCode, jsonResponse: jsonResponse, 
+      headers: headers, okCode: okCode, 
       multipart: multipart, returnWasOkOnly: returnWasOkOnly,
       ifMapThenMap: ifMapThenMap,
     );
@@ -151,7 +151,9 @@ class HttpReqService {
   /// 
   /// ***ifMapThenMap***, by default is true. If **body** is a Map<String, Object> type, 
   /// then **body.map** is used to convert it, else **jsonEncode** is used.
-  static Future<T?> _baseRequest<T>(String name, String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, bool jsonResponse = false, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true}) async {
+  static Future<T?> _baseRequest<T>(String name, String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true}) async {
+    // About Json: https://www.json.org/json-en.html
+    var jsonResponse = T is Map || T is List;
     var _headers = headers ?? (
       multipart != null 
         ? {'Content-Type': 'application/json'}
