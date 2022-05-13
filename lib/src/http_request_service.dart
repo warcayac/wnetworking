@@ -153,7 +153,7 @@ class HttpReqService {
   /// then **body.map** is used to convert it, else **jsonEncode** is used.
   static Future<T?> _baseRequest<T>(String name, String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true}) async {
     // About Json: https://www.json.org/json-en.html
-    var jsonResponse = T is Map || T is List;
+    var jsonResponse = [JMap, List, List<String>, List<String?>, List<int>, List<int?>, List<double>, List<double?>, List<JMap>, List<JMap?>, List<List>, List<List?>, List<bool>, List<bool?>].contains(T);
     var _headers = headers ?? (
       multipart != null 
         ? {'Content-Type': 'application/json'}
