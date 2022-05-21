@@ -76,7 +76,7 @@ class HttpReqService {
       .catchError((err) => PrintService.showError(err));
   }
   /* ---------------------------------------------------------------------------- */
-  @Deprecated('Use method Post')
+  // @Deprecated('Use method Post')
   static Future<T?> postFiles<T>(String url, {List<MapEntry<String, String>>? paths, List<MapEntry<String, String>>? fields}) async {
     // var request = http.MultipartRequest('POST', Uri.parse(url));
     // FROM: https://stackoverflow.com/questions/66327288/how-to-set-a-field-with-multi-value-into-a-post-request
@@ -109,21 +109,21 @@ class HttpReqService {
       .catchError((err) => PrintService.showError(err));
   }
   /* ---------------------------------------------------------------------------- */
-  static Future<T?> get<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true}) {
+  static Future<T?> get<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true, Duration? timeLimit}) {
     return _baseRequest<T>(
       'GET', url, auth: auth, authData: authData, body: body,
       headers: headers, okCode: okCode, 
       multipart: multipart, returnWasOkOnly: returnWasOkOnly,
-      ifMapThenMap: ifMapThenMap,
+      ifMapThenMap: ifMapThenMap, timeLimit: timeLimit,
     );
   }
   /* ---------------------------------------------------------------------------- */
-  static Future<T?> post<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true}) {
+  static Future<T?> post<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true, Duration? timeLimit}) {
     return _baseRequest<T>(
       'POST', url, auth: auth, authData: authData, body: body,
       headers: headers, okCode: okCode, 
       multipart: multipart, returnWasOkOnly: returnWasOkOnly,
-      ifMapThenMap: ifMapThenMap,
+      ifMapThenMap: ifMapThenMap, timeLimit: timeLimit,
     );
   }
   /* ---------------------------------------------------------------------------- */
@@ -147,11 +147,16 @@ class HttpReqService {
   /// If ***returnWasOkOnly*** is true, the future response will be a bool type (that is, 
   /// T must be bool) indicating the Post operation was successfully or not only.
   /// 
-  /// If ***jsonResponse*** is true, the future response will be handled as a JSON format
-  /// 
   /// ***ifMapThenMap***, by default is true. If **body** is a Map<String, Object> type, 
   /// then **body.map** is used to convert it, else **jsonEncode** is used.
-  static Future<T?> _baseRequest<T>(String name, String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true}) async {
+  /// 
+  /// ***splitListByUsingSameKey*** is used when some servers require to post files or values
+  /// by using the same key, example: https://my.plantnet.org/ . By default is false.
+  /// 
+  /// ***timeLimit***, it's the timeout for the request, by default it's 1 minute.
+  /// 
+  // TODO: splitListByUsingSameKey debe implementarse para indicar al paquete usar 'whttp.MultipartListRequest' en lugar de 'http.MultipartListRequest', y de esa manera introducir llaves duplicadas con distintos valores.
+  static Future<T?> _baseRequest<T>(String name, String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true, bool splitListByUsingSameKey = false, Duration? timeLimit}) async {
     // About Json: https://www.json.org/json-en.html
     var jsonResponse = [JMap, List, List<String>, List<String?>, List<int>, List<int?>, List<double>, List<double?>, List<JMap>, List<JMap?>, List<List>, List<List?>, List<bool>, List<bool?>].contains(T);
     var _headers = headers ?? (
@@ -193,14 +198,11 @@ class HttpReqService {
       request = rq;
       
       if (body != null) {
-        if (body is Map<String,Object>) {
-          var _body = body.map((key, value) {
-            return MapEntry(key, value is String ? value : json.encode(value));
-          });
-          rq.fields.addAll(_body);
-        } else {
-          throw 'Body must be a Map<String,Object> type.';
-        }
+        if (body is! Map<String,Object>) throw 'Body must be a Map<String,Object> type.';
+        var _body = body.map((key, value) {
+          return MapEntry(key, value is String ? value : json.encode(value));
+        });
+        rq.fields.addAll(_body);
       }
       
       for (var part in multipart.entries) {
@@ -256,6 +258,7 @@ class HttpReqService {
         PrintService.showDataNotOK(response);
         return returnWasOkOnly ? false as T : null;
       })
+      .timeout(timeLimit ?? Duration(minutes: 1))
       .catchError((err) => PrintService.showError(err));
   }
   /* ---------------------------------------------------------------------------- */
