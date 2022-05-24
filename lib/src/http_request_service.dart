@@ -109,21 +109,23 @@ class HttpReqService {
       .catchError((err) => PrintService.showError(err));
   }
   /* ---------------------------------------------------------------------------- */
-  static Future<T?> get<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true, Duration? timeLimit}) {
+  static Future<T?> get<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true, Duration? timeLimit, bool showMessageWhenNotOk = true}) {
     return _baseRequest<T>(
       'GET', url, auth: auth, authData: authData, body: body,
       headers: headers, okCode: okCode, 
       multipart: multipart, returnWasOkOnly: returnWasOkOnly,
       ifMapThenMap: ifMapThenMap, timeLimit: timeLimit,
+      showMessageWhenNotOk: showMessageWhenNotOk,
     );
   }
   /* ---------------------------------------------------------------------------- */
-  static Future<T?> post<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true, Duration? timeLimit}) {
+  static Future<T?> post<T>(String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true, Duration? timeLimit, bool showMessageWhenNotOk = true}) {
     return _baseRequest<T>(
       'POST', url, auth: auth, authData: authData, body: body,
       headers: headers, okCode: okCode, 
       multipart: multipart, returnWasOkOnly: returnWasOkOnly,
       ifMapThenMap: ifMapThenMap, timeLimit: timeLimit,
+      showMessageWhenNotOk: showMessageWhenNotOk,
     );
   }
   /* ---------------------------------------------------------------------------- */
@@ -154,9 +156,11 @@ class HttpReqService {
   /// by using the same key, example: https://my.plantnet.org/ . By default is false.
   /// 
   /// ***timeLimit***, it's the timeout for the request, by default it's 1 minute.
+  /// ***showMessageWhenNotOk***, it is used to display or not a message when the request
+  /// return a code different to the value **okCode**.
   /// 
   // TODO: splitListByUsingSameKey debe implementarse para indicar al paquete usar 'whttp.MultipartListRequest' en lugar de 'http.MultipartListRequest', y de esa manera introducir llaves duplicadas con distintos valores.
-  static Future<T?> _baseRequest<T>(String name, String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true, bool splitListByUsingSameKey = false, Duration? timeLimit}) async {
+  static Future<T?> _baseRequest<T>(String name, String url, {AuthType auth = AuthType.noAuth, Object? authData, Object? body, Map<String, String>? headers, int okCode = 200, Map<String, Object>? multipart, bool returnWasOkOnly = false, bool ifMapThenMap = true, bool splitListByUsingSameKey = false, Duration? timeLimit, bool showMessageWhenNotOk = true}) async {
     // About Json: https://www.json.org/json-en.html
     var jsonResponse = [JMap, List, List<String>, List<String?>, List<int>, List<int?>, List<double>, List<double?>, List<JMap>, List<JMap?>, List<List>, List<List?>, List<bool>, List<bool?>].contains(T);
     var _headers = headers ?? (
@@ -258,7 +262,7 @@ class HttpReqService {
             ? true as T
             : (jsonResponse ? jsonDecode(response.body) : response.body) as T;
         }
-        PrintService.showDataNotOK(response);
+        if (showMessageWhenNotOk) PrintService.showDataNotOK(response);
         return returnWasOkOnly ? false as T : null;
       })
       .timeout(timeLimit ?? Duration(minutes: 1))

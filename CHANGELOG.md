@@ -22,3 +22,8 @@
 ## 0.4.1
 
 * Parameter `header` (if null) considers the `ifMapThenMap` parameter to detect what value to assign to header. Example: `body` is a Map, `multipart` is null, and it needs to be sent as `application/json` and not as `application/x-www-form-urlencoded`, then `ifMapThenMap` must be `false`.
+
+## 0.4.2
+
+* Parameter `showMessageWhenNotOk` added to POST/GET methods.
+* 
