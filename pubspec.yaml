@@ -1,6 +1,6 @@
 name: wnetworking
 description: Servicio de solicitudes HTTP.
-version: 0.4.2
+version: 0.4.3
 homepage: https://github.com/warcayac/wnetworking
 
 environment:

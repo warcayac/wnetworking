@@ -16,7 +16,19 @@ typedef JMap = Map<String, dynamic>;
 typedef LJMap = List<JMap>;
 
 
+class _AcceptBadCertificates extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
+
 class HttpReqService {
+  /* ---------------------------------------------------------------------------- */
+  /// To fix error messages about CERTIFICATE_VERIFY_FAILED
+  // source: https://stackoverflow.com/a/61312927/955594
+  static void enableBadCertificates() => HttpOverrides.global = _AcceptBadCertificates();
   /* ---------------------------------------------------------------------------- */
   @Deprecated('Use method Get')
   static Future<String?> getRaw(String url, {int okCode = 200}) {

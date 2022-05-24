@@ -26,4 +26,7 @@
 ## 0.4.2
 
 * Parameter `showMessageWhenNotOk` added to POST/GET methods.
-* 
+
+## 0.4.3
+* `enableBadCertificates` method added to fix error messages about CERTIFICATE_VERIFY_FAILED
+
