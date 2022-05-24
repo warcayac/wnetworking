@@ -165,7 +165,10 @@ class HttpReqService {
         : body == null
           ? {'Content-Type': 'application/json'}
           : body is Map<String,Object>
-            ? {'Content-Type': 'application/x-www-form-urlencoded'}
+            ? (ifMapThenMap 
+              ? {'Content-Type': 'application/x-www-form-urlencoded'}
+              : {'Content-Type': 'application/json'}
+            )
             : body is String
               ? {'Content-Type': 'text/plain'}
               : {} // especificar: image/jpeg,application/javascript,application/xml,text/html
