@@ -1,6 +1,6 @@
 name: wnetworking
 description: Servicio de solicitudes HTTP.
-version: 0.4.3
+version: 0.4.4
 homepage: https://github.com/warcayac/wnetworking
 
 environment:
@@ -15,3 +15,12 @@ dependencies:
 
 dev_dependencies:
   lints: ^1.0.0
+
+# This package supports all platforms listed below.
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
