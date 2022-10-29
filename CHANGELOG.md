@@ -30,3 +30,5 @@
 ## 0.4.3
 * `enableBadCertificates` method added to fix error messages about CERTIFICATE_VERIFY_FAILED
 
+## 0.4.4
+* Web support is available now.
